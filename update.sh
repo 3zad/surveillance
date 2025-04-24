@@ -1,7 +1,7 @@
 mv /surveillance/token.txt /
 mv /surveillance/main.db /
 rm -r /surveillance
-git clone https://github.com/3raz/surveillance.git
+git clone https://github.com/3zad/surveillance.git
 mv /token.txt /surveillance/
 mv /main.db /surveillance/
 cd /surveillance
