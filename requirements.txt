@@ -1,0 +1,8 @@
+nextcord
+aiosqlite
+langdetect
+nltk
+textstat
+matplotlib
+pandas
+numpy
