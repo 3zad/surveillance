@@ -66,13 +66,17 @@ class GeneralCommands(commands.Cog):
             ze_credits = await self.db.get_credits(member[2:-1])
         except:
             ze_credits = 0
-            
+
         try:
             starred_number = await self.db.raw_sql(f"select count(*) from starred where user_id={member[2:-1]}")
             starred_number = starred_number.split(",")[0].replace("(", "")
         except:
             starred_number = 0
 
+        try:
+            int(ze_credits)
+        except:
+            ze_credits = 0
         total = int(ze_credits) + int(starred_number)*10
         score = math.atan(0.01*total)*(1600/math.pi)
 
