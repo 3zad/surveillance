@@ -62,7 +62,11 @@ class GeneralCommands(commands.Cog):
         # formula : arctan(0.01x)*(1600/pi)
         # every starred message is 10 credits
         
-        ze_credits = await self.db.get_credits(member[2:-1])
+        try:
+            ze_credits = await self.db.get_credits(member[2:-1])
+        except:
+            ze_credits = 0
+            
         try:
             starred_number = await self.db.raw_sql(f"select count(*) from starred where user_id={member[2:-1]}")
             starred_number = starred_number.split(",")[0].replace("(", "")
