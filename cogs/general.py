@@ -9,6 +9,7 @@ import io
 from langdetect import detect
 from db.MainDatabase import MainDatabase
 from bot_utils.language import Language
+import math
 
 class GeneralCommands(commands.Cog):
     def __init__(self, bot, config):
@@ -54,6 +55,33 @@ class GeneralCommands(commands.Cog):
         word_tuple = await self.db.get_message_sums_of_server()
         await ctx.send(f"命令成功 {int(word_tuple[2])} curse words were sent over {int(word_tuple[0])} messages. The average curse word count per message is {round(float(word_tuple[2])/float(word_tuple[0]), 2)} curse words.")
 
+    @nextcord.slash_command(name="credit", description="Get credit information.")
+    async def credit(self, ctx, member):
+        # Max credit: 800
+        # Min credit: -800
+        # formula : arctan(0.01x)*(1600/pi)
+        # every starred message is 10 credits
+        
+        ze_credits = await self.db.get_credits(member[2:-1])
+        try:
+            starred_number = await self.db.raw_sql(f"select count(*) from starred where user_id={member[2:-1]}")
+            starred_number = starred_number.split(",")[0].replace("(", "")
+        except:
+            starred_number = 0
+
+        total = int(ze_credits) + int(starred_number)*10
+        score = math.atan(0.01*total)*(1600/math.pi)
+
+        level = ""
+        if score >= 400:
+            level = "Glorious To The CCP 太棒了"
+        elif score > 10 and score < 400:
+            level = "Average Score 没关系"
+        elif score <= 10:
+            level = "You Bring Great Shame 这很糟糕"
+        
+
+        await ctx.send(f"命令成功 你的分数：{round(score)}。 {level}。")
 
     @nextcord.slash_command(name="language", description="Gives language information about a user.")
     async def language(self, ctx, member):

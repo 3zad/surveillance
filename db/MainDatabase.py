@@ -31,6 +31,7 @@ class MainDatabase:
                 CREATE TABLE IF NOT EXISTS messages (
                 id INTEGER PRIMARY KEY,
                 user_id INTEGER,
+                message_id INTEGER,
                 channel_id INTEGER,
                 number_of_words INTEGER,
                 number_of_curse_words INTEGER,
@@ -156,7 +157,16 @@ class MainDatabase:
             return rows
 
     # -------------- Credit -------------- #
+
+    # --- Get --- #
     
+    async def get_credits(self, user_id) -> int:
+        async with aiosqlite.connect(self.db_name) as db:
+            cursor = await db.execute('SELECT sum(credits) from credit join messages on credit.message_id = messages.message_id where messages.user_id = ?', (str(user_id),))
+            row = await cursor.fetchone()
+            return row[0]
+
+
     # --- Set --- #
     
     async def add_credits(self, message, credits):
@@ -183,12 +193,12 @@ class MainDatabase:
     # -------------- User Statistics -------------- #
 
     # --- Set --- #
-    async def add_message(self, user, channel, word_count, curse_count, question_count, period_count, exclaimation_count, emoji_count, language, reading_level, dale_chall):
+    async def add_message(self, user, message, channel, word_count, curse_count, question_count, period_count, exclaimation_count, emoji_count, language, reading_level, dale_chall):
         async with aiosqlite.connect(self.db_name) as db:
             await db.execute('''
-                INSERT INTO messages (user_id, channel_id, number_of_words, number_of_curse_words, number_of_question_marks, number_of_periods, number_of_exclaimation_marks, number_of_emojis, language, reading_level, dale_chall)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (str(user), str(channel), word_count, curse_count, question_count, period_count, exclaimation_count, emoji_count, language, reading_level, dale_chall))
+                INSERT INTO messages (user_id, message_id, channel_id, number_of_words, number_of_curse_words, number_of_question_marks, number_of_periods, number_of_exclaimation_marks, number_of_emojis, language, reading_level, dale_chall)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (str(user), str(message), str(channel), word_count, curse_count, question_count, period_count, exclaimation_count, emoji_count, language, reading_level, dale_chall))
             await db.commit()
 
     async def set_reaction(self, message_id, user_sent, user_recieved, reaction, is_add):
