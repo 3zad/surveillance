@@ -41,6 +41,7 @@ class GeneralCommands(commands.Cog):
     async def count(self, ctx: nextcord.Interaction):
         if ctx.channel.id != self.commands_channel:
             await ctx.response.send_message("Please go to bot command channel! 失败!", ephemeral=True)
+            return
 
     @count.subcommand(name="word", description="Gives information on the number of words from a user.")
     async def word_count(self, ctx, member):
@@ -65,6 +66,7 @@ class GeneralCommands(commands.Cog):
         # every starred message is 10 credits
         if ctx.channel.id != self.commands_channel:
             await ctx.response.send_message("Please go to bot command channel! 失败!", ephemeral=True)
+            return
         
         try:
             ze_credits = await self.db.get_credits(member[2:-1])
@@ -99,6 +101,8 @@ class GeneralCommands(commands.Cog):
     async def language(self, ctx, member):
         if ctx.channel.id != self.commands_channel:
             await ctx.response.send_message("Please go to bot command channel! 失败!", ephemeral=True)
+            return
+        
         language_row = await self.db.get_language(member[2:-1])
         language_dict = {}
         summa = 0
@@ -132,6 +136,7 @@ class GeneralCommands(commands.Cog):
     async def reading(self, ctx: nextcord.Interaction):
         if ctx.channel.id != self.commands_channel:
             await ctx.response.send_message("Please go to bot command channel! 失败!", ephemeral=True)
+            return
 
     @reading.subcommand(name="level", description="Gives the average reading level of a user.")
     async def reading_level(self, ctx, member):
@@ -159,6 +164,8 @@ class GeneralCommands(commands.Cog):
     async def message_times(self, ctx):
         if ctx.channel.id != self.commands_channel:
             await ctx.response.send_message("Please go to bot command channel! 失败!", ephemeral=True)
+            return
+        
         data = await self.db.get_message_time_counts()
         hours = [int(row[0]) for row in data]
         message_counts = [row[1]/row[2] for row in data]
@@ -262,7 +269,8 @@ class GeneralCommands(commands.Cog):
     async def reminder(self, ctx: nextcord.Interaction, reminder, year_month_day, hour_minute_second):
         if ctx.channel.id != self.commands_channel:
             await ctx.response.send_message("Please go to bot command channel! 失败!", ephemeral=True)
-            
+            return
+        
         date_format = "%Y-%m-%d %H:%M:%S"
         date_str = f"{year_month_day} {hour_minute_second}"
         
