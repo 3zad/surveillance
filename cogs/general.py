@@ -18,6 +18,7 @@ class GeneralCommands(commands.Cog):
         self.config = config
 
         self.star_channel = self.config["star_channel"]
+        self.commands_channel = self.config["commands_channel"]
 
 
     async def star_embed(self, guild_id, channel_id, message_id, message, member):
@@ -38,7 +39,8 @@ class GeneralCommands(commands.Cog):
 
     @nextcord.slash_command(name="count", description="Various count commands.")
     async def count(self, ctx: nextcord.Interaction):
-        pass
+        if ctx.channel.id != self.commands_channel:
+            await ctx.response.send_message("Please go to bot command channel! 失败!", ephemeral=True)
 
     @count.subcommand(name="word", description="Gives information on the number of words from a user.")
     async def word_count(self, ctx, member):
@@ -61,6 +63,8 @@ class GeneralCommands(commands.Cog):
         # Min credit: -800
         # formula : arctan(0.01x)*(1600/pi)
         # every starred message is 10 credits
+        if ctx.channel.id != self.commands_channel:
+            await ctx.response.send_message("Please go to bot command channel! 失败!", ephemeral=True)
         
         try:
             ze_credits = await self.db.get_credits(member[2:-1])
@@ -93,6 +97,8 @@ class GeneralCommands(commands.Cog):
 
     @nextcord.slash_command(name="language", description="Gives language information about a user.")
     async def language(self, ctx, member):
+        if ctx.channel.id != self.commands_channel:
+            await ctx.response.send_message("Please go to bot command channel! 失败!", ephemeral=True)
         language_row = await self.db.get_language(member[2:-1])
         language_dict = {}
         summa = 0
@@ -124,7 +130,8 @@ class GeneralCommands(commands.Cog):
 
     @nextcord.slash_command(name="reading", description="Manage muting users.")
     async def reading(self, ctx: nextcord.Interaction):
-        pass
+        if ctx.channel.id != self.commands_channel:
+            await ctx.response.send_message("Please go to bot command channel! 失败!", ephemeral=True)
 
     @reading.subcommand(name="level", description="Gives the average reading level of a user.")
     async def reading_level(self, ctx, member):
@@ -150,6 +157,8 @@ class GeneralCommands(commands.Cog):
 
     @nextcord.slash_command(name="times", description="Outputs a graph with the number of messages during different times of the day.")
     async def message_times(self, ctx):
+        if ctx.channel.id != self.commands_channel:
+            await ctx.response.send_message("Please go to bot command channel! 失败!", ephemeral=True)
         data = await self.db.get_message_time_counts()
         hours = [int(row[0]) for row in data]
         message_counts = [row[1]/row[2] for row in data]
@@ -251,7 +260,9 @@ class GeneralCommands(commands.Cog):
 
     @nextcord.slash_command(name="reminder", description="DAY-MONTH-YEAR HOUR:MINUTE:SECOND gives a reminder after a period of time.")
     async def reminder(self, ctx: nextcord.Interaction, reminder, year_month_day, hour_minute_second):
-
+        if ctx.channel.id != self.commands_channel:
+            await ctx.response.send_message("Please go to bot command channel! 失败!", ephemeral=True)
+            
         date_format = "%Y-%m-%d %H:%M:%S"
         date_str = f"{year_month_day} {hour_minute_second}"
         
