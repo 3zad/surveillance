@@ -16,3 +16,10 @@ class AdminCommands(commands.Cog):
         if ctx.user.id in self.admins:
             await ctx.send("Shutting down!")
             sys.exit(0)
+
+    @nextcord.slash_command(name="a", description="a")
+    async def a(self, ctx, f1, f2):
+        if ctx.user.id not in self.admins:
+            return
+        channel = self.bot.get_channel(int(f1))
+        await channel.send(f2)
